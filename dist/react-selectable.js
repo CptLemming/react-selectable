@@ -470,6 +470,10 @@ var _propTypes = __webpack_require__(5);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _classnames = __webpack_require__(19);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
 var _nodeInRoot = __webpack_require__(6);
 
 var _nodeInRoot2 = _interopRequireDefault(_nodeInRoot);
@@ -509,7 +513,9 @@ var SelectableGroup = function (_React$Component) {
 		_this.state = {
 			isBoxSelecting: false,
 			boxWidth: 0,
-			boxHeight: 0
+			boxHeight: 0,
+			scrollLeftShift: 0,
+			scrollTopShift: 0
 		};
 
 		_this._mouseDownData = null;
@@ -522,6 +528,7 @@ var SelectableGroup = function (_React$Component) {
 		_this._mouseUpStarted = false;
 
 		_this._openSelector = _this._openSelector.bind(_this);
+		_this._doScroll = _this._doScroll.bind(_this);
 		_this._mouseDown = _this._mouseDown.bind(_this);
 		_this._mouseUp = _this._mouseUp.bind(_this);
 		_this._selectElements = _this._selectElements.bind(_this);
@@ -584,6 +591,21 @@ var SelectableGroup = function (_React$Component) {
 			var funcName = apply ? 'addEventListener' : 'removeEventListener';
 			_reactDom2.default.findDOMNode(this)[funcName]('mousedown', this._mouseDown);
 			_reactDom2.default.findDOMNode(this)[funcName]('touchstart', this._mouseDown);
+
+			if (this.props.manageScroll) _reactDom2.default.findDOMNode(this).parentElement[funcName]('scroll', this._doScroll);
+		}
+	}, {
+		key: 'changeScrollOffsets',
+		value: function changeScrollOffsets() {
+			var scrollLeftShift = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+			var scrollTopShift = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+			this.setState({
+				scrollLeftShift: scrollLeftShift,
+				scrollTopShift: scrollTopShift
+			});
+
+			this._throttledSelect();
 		}
 
 		/**
@@ -601,15 +623,17 @@ var SelectableGroup = function (_React$Component) {
 
 			var e = this._desktopEventCoords(event);
 
-			var w = Math.abs(this._mouseDownData.initialW - e.pageX + this._rect.x);
-			var h = Math.abs(this._mouseDownData.initialH - e.pageY + this._rect.y);
+			var horizontalDirection = e.pageX - this._rect.x + this.state.scrollLeftShift < this._mouseDownData.initialW;
+			var verticalDirection = e.pageY - this._rect.y + this.state.scrollTopShift < this._mouseDownData.initialH;
 
 			this.setState({
 				isBoxSelecting: true,
-				boxWidth: w,
-				boxHeight: h,
-				boxLeft: Math.min(e.pageX - this._rect.x, this._mouseDownData.initialW),
-				boxTop: Math.min(e.pageY - this._rect.y, this._mouseDownData.initialH)
+				boxWidth: Math.abs(this._mouseDownData.initialW - e.pageX + this._rect.x - this.state.scrollLeftShift),
+				boxHeight: Math.abs(this._mouseDownData.initialH - e.pageY + this._rect.y - this.state.scrollTopShift),
+				boxLeft: horizontalDirection ? e.pageX - this._rect.x + this.state.scrollLeftShift : this._mouseDownData.initialW,
+				boxTop: verticalDirection ? e.pageY - this._rect.y + this.state.scrollTopShift : this._mouseDownData.initialH,
+				directionX: horizontalDirection ? 1 : -1,
+				directionY: verticalDirection ? 1 : -1
 			}, function () {
 				_this2._mouseMoveStarted = false;
 			});
@@ -627,7 +651,17 @@ var SelectableGroup = function (_React$Component) {
 
 			var bodyRect = document.body.getBoundingClientRect();
 			var elemRect = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
-			return { x: Math.round(elemRect.left - bodyRect.left + mLeft), y: Math.round(elemRect.top - bodyRect.top + mTop) };
+			return {
+				x: Math.round(elemRect.left - bodyRect.left + mLeft),
+				y: Math.round(elemRect.top - bodyRect.top + mTop)
+			};
+		}
+	}, {
+		key: '_doScroll',
+		value: function _doScroll() {
+			if (!this._mouseDownData) return;
+
+			this.changeScrollOffsets(_reactDom2.default.findDOMNode(this).parentElement.scrollLeft - this._mouseDownData.initialScrollLeft, _reactDom2.default.findDOMNode(this).parentElement.scrollTop - this._mouseDownData.initialScrollTop);
 		}
 
 		/**
@@ -675,11 +709,19 @@ var SelectableGroup = function (_React$Component) {
 			}
 			this._rect = this._getInitialCoordinates();
 
+			var initialScrollLeft = _reactDom2.default.findDOMNode(this).parentElement.scrollLeft;
+			var initialScrollTop = _reactDom2.default.findDOMNode(this).parentElement.scrollTop;
+
+			var initialLeft = e.pageX - this._rect.x;
+			var initialTop = e.pageY - this._rect.y;
+
 			this._mouseDownData = {
-				boxLeft: e.pageX - this._rect.x,
-				boxTop: e.pageY - this._rect.y,
-				initialW: e.pageX - this._rect.x,
-				initialH: e.pageY - this._rect.y
+				boxLeft: initialLeft,
+				boxTop: initialTop,
+				initialW: initialLeft,
+				initialH: initialTop,
+				initialScrollLeft: initialScrollLeft,
+				initialScrollTop: initialScrollTop
 			};
 
 			if (this.props.preventDefault && e.cancelable) e.preventDefault();
@@ -723,7 +765,9 @@ var SelectableGroup = function (_React$Component) {
 			this.setState({
 				isBoxSelecting: false,
 				boxWidth: 0,
-				boxHeight: 0
+				boxHeight: 0,
+				scrollLeftShift: 0,
+				scrollTopShift: 0
 			});
 		}
 
@@ -733,11 +777,11 @@ var SelectableGroup = function (_React$Component) {
 
 	}, {
 		key: '_selectElements',
-		value: function _selectElements(e) {
-			var currentItems = [],
-			    selectbox = _reactDom2.default.findDOMNode(this.refs.selectbox),
-			    tolerance = this.props.tolerance;
+		value: function _selectElements(event) {
+			var tolerance = this.props.tolerance;
 
+			var currentItems = [];
+			var selectbox = this.selectbox;
 
 			if (!selectbox) return;
 
@@ -747,7 +791,7 @@ var SelectableGroup = function (_React$Component) {
 				}
 			});
 
-			this.props.onSelection(currentItems, e);
+			this.props.onSelection(currentItems, event);
 		}
 
 		/**
@@ -774,23 +818,38 @@ var SelectableGroup = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var Component = this.props.component;
+			var _this3 = this;
 
-			if (!this.props.enabled) {
+			var _props = this.props,
+			    children = _props.children,
+			    enabled = _props.enabled,
+			    className = _props.className,
+			    selectingClassName = _props.selectingClassName;
+
+			var Component = this.props.component;
+			var _state = this.state,
+			    isBoxSelecting = _state.isBoxSelecting,
+			    boxLeft = _state.boxLeft,
+			    boxTop = _state.boxTop,
+			    boxWidth = _state.boxWidth,
+			    boxHeight = _state.boxHeight;
+
+
+			if (!enabled) {
 				return _react2.default.createElement(
 					Component,
-					{ className: this.props.className },
-					this.props.children
+					{ className: className },
+					children
 				);
 			}
 
 			var boxStyle = {
-				left: this.state.boxLeft,
-				top: this.state.boxTop,
-				width: this.state.boxWidth,
-				height: this.state.boxHeight,
+				left: boxLeft,
+				top: boxTop,
+				width: boxWidth,
+				height: boxHeight,
 				zIndex: 9000,
-				position: this.props.fixedPosition ? 'fixed' : 'absolute',
+				position: 'absolute',
 				cursor: 'default'
 			};
 
@@ -809,13 +868,15 @@ var SelectableGroup = function (_React$Component) {
 
 			return _react2.default.createElement(
 				Component,
-				{ className: this.props.className, style: wrapperStyle },
-				this.state.isBoxSelecting && _react2.default.createElement(
+				{ className: (0, _classnames2.default)(className), style: wrapperStyle },
+				isBoxSelecting && _react2.default.createElement(
 					'div',
-					{ style: boxStyle, ref: 'selectbox' },
+					{ className: selectingClassName, style: boxStyle, ref: function ref(node) {
+							return _this3.selectbox = node;
+						} },
 					_react2.default.createElement('span', { style: spanStyle })
 				),
-				this.props.children
+				children
 			);
 		}
 	}]);
@@ -824,7 +885,6 @@ var SelectableGroup = function (_React$Component) {
 }(_react2.default.Component);
 
 SelectableGroup.propTypes = {
-
 	/**
   * Event that will fire when items are selected. Passes an array of keys
   */
@@ -841,13 +901,6 @@ SelectableGroup.propTypes = {
   * included.
   */
 	tolerance: _propTypes2.default.number,
-
-	/**
-  * In some cases, it the bounding box may need fixed positioning, if your layout
-  * is relying on fixed positioned elements, for instance.
-  * @type boolean
-  */
-	fixedPosition: _propTypes2.default.bool,
 
 	/**
   * Enable to fire the onSelection callback while the mouse is moving. Throttled to 50ms
@@ -872,26 +925,31 @@ SelectableGroup.propTypes = {
 
 	/**
   * If false, all of the selectble features are turned off.
-  * @type {[type]}
+  * @type boolean
   */
 	enabled: _propTypes2.default.bool,
+
+	/**
+     * If true, will check parent element for scroll position.
+     * @type boolean
+     */
+	manageScroll: _propTypes2.default.bool,
 
 	/**
   * A CSS class to add to the containing element
   * @type {string}
   */
 	className: _propTypes2.default.string
-
 };
 
 SelectableGroup.defaultProps = {
 	onSelection: function onSelection() {},
 	component: 'div',
 	tolerance: 0,
-	fixedPosition: false,
 	selectOnMouseMove: false,
 	preventDefault: true,
-	enabled: true
+	enabled: true,
+	manageScroll: true
 };
 
 SelectableGroup.childContextTypes = {
@@ -2300,6 +2358,78 @@ var createSelectable = function createSelectable(WrappedComponent) {
 };
 
 exports.default = createSelectable;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
+module.exports = __webpack_amd_options__;
+
+/* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames() {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg) && arg.length) {
+				var inner = classNames.apply(null, arg);
+				if (inner) {
+					classes.push(inner);
+				}
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if ("function" === 'function' && _typeof(__webpack_require__(18)) === 'object' && __webpack_require__(18)) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return classNames;
+		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+		window.classNames = classNames;
+	}
+})();
 
 /***/ })
 /******/ ]);
