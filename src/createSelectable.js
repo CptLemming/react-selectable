@@ -6,6 +6,8 @@ const createSelectable = (WrappedComponent) => {
 	class SelectableItem extends React.Component {
 
 		componentDidMount () {
+			// Cannot remove findDOMNode here:
+			// There's no nice way to pass refs to function components
 			this.context.selectable.register(this.props.selectableKey, ReactDOM.findDOMNode(this));
 		}
 

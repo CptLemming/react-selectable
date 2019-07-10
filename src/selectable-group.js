@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -41,6 +41,8 @@ class SelectableGroup extends React.Component {
 		this._throttledSelect = throttle(this._selectElements, 50);
 	}
 
+	selectableRef = createRef();
+
 	getChildContext () {
 		return {
 			selectable: {
@@ -79,10 +81,10 @@ class SelectableGroup extends React.Component {
 
 	_applyMousedown(apply) {
 		const funcName = apply ? 'addEventListener' : 'removeEventListener';
-		ReactDOM.findDOMNode(this)[funcName]('mousedown', this._mouseDown);
-		ReactDOM.findDOMNode(this)[funcName]('touchstart', this._mouseDown);
+		this.selectableRef.current[funcName]('mousedown', this._mouseDown);
+		this.selectableRef.current[funcName]('touchstart', this._mouseDown);
 
-		if (this.props.manageScroll) ReactDOM.findDOMNode(this).parentElement[funcName]('scroll', this._doScroll);
+		if (this.props.manageScroll) this.selectableRef.current.parentElement[funcName]('scroll', this._doScroll);
 	}
 
 	changeScrollOffsets (scrollLeftShift = 0, scrollTopShift = 0) {
@@ -130,7 +132,7 @@ class SelectableGroup extends React.Component {
 		const mTop = parseInt(t.slice(0, t.length - 2), 10);
 
 		const bodyRect = document.body.getBoundingClientRect();
-		const elemRect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+		const elemRect = this.selectableRef.current.getBoundingClientRect();
 		return { 
 			x: Math.round(elemRect.left - bodyRect.left + mLeft),
 			y: Math.round(elemRect.top - bodyRect.top + mTop)
@@ -141,8 +143,8 @@ class SelectableGroup extends React.Component {
 		if (!this._mouseDownData) return;
 
 		this.changeScrollOffsets(
-			ReactDOM.findDOMNode(this).parentElement.scrollLeft - this._mouseDownData.initialScrollLeft,
-			ReactDOM.findDOMNode(this).parentElement.scrollTop - this._mouseDownData.initialScrollTop
+			this.selectableRef.current.parentElement.scrollLeft - this._mouseDownData.initialScrollLeft,
+			this.selectableRef.current.parentElement.scrollTop - this._mouseDownData.initialScrollTop
 		);
 	}
 
@@ -159,7 +161,7 @@ class SelectableGroup extends React.Component {
 		this._mouseUpStarted = false;
  		const e = this._desktopEventCoords(event);
 
-		const node = ReactDOM.findDOMNode(this);
+		const node = this.selectableRef.current;
 		let collides, offsetData, distanceData;
 		window.addEventListener('mouseup', this._mouseUp);
 		window.addEventListener('touchend', this._mouseUp);
@@ -187,8 +189,8 @@ class SelectableGroup extends React.Component {
 		}
 		this._rect = this._getInitialCoordinates();
 
-		const initialScrollLeft = ReactDOM.findDOMNode(this).parentElement.scrollLeft;
-		const initialScrollTop = ReactDOM.findDOMNode(this).parentElement.scrollTop;
+		const initialScrollLeft = this.selectableRef.current.parentElement.scrollLeft;
+		const initialScrollTop = this.selectableRef.current.parentElement.scrollTop;
 
 		const initialLeft = e.pageX - this._rect.x;
 		const initialTop = e.pageY - this._rect.y;
@@ -325,7 +327,7 @@ class SelectableGroup extends React.Component {
 		};
 
 		return (
-			<Component className={classnames(className)} style={wrapperStyle}>
+			<Component ref={this.selectableRef} className={classnames(className)} style={wrapperStyle}>
 				{isBoxSelecting && <div className={selectingClassName} style={boxStyle} ref={node => this.selectbox = node}>
 					<span style={spanStyle} />
 				</div>}

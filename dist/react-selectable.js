@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -350,16 +350,25 @@ if (process.env.NODE_ENV !== 'production') {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(10)(isValidElement, throwOnDirectAccess);
+  module.exports = __webpack_require__(11)(isValidElement, throwOnDirectAccess);
 } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(13)();
+  module.exports = __webpack_require__(14)();
 }
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports) {
+
+/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
+module.exports = __webpack_amd_options__;
+
+/* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -384,7 +393,7 @@ var isNodeInRoot = function isNodeInRoot(node, root) {
 exports.default = isNodeInRoot;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -411,7 +420,7 @@ exports.default = function (node) {
 };
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -422,11 +431,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.nodeInRoot = exports.isNodeIn = exports.createSelectable = exports.SelectableGroup = undefined;
 
-var _selectableGroup = __webpack_require__(9);
+var _selectableGroup = __webpack_require__(10);
 
 var _selectableGroup2 = _interopRequireDefault(_selectableGroup);
 
-var _createSelectable = __webpack_require__(17);
+var _createSelectable = __webpack_require__(19);
 
 var _createSelectable2 = _interopRequireDefault(_createSelectable);
 
@@ -434,7 +443,7 @@ var _isNodeIn = __webpack_require__(2);
 
 var _isNodeIn2 = _interopRequireDefault(_isNodeIn);
 
-var _nodeInRoot = __webpack_require__(6);
+var _nodeInRoot = __webpack_require__(7);
 
 var _nodeInRoot2 = _interopRequireDefault(_nodeInRoot);
 
@@ -446,7 +455,7 @@ exports.isNodeIn = _isNodeIn2.default;
 exports.nodeInRoot = _nodeInRoot2.default;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -470,11 +479,11 @@ var _propTypes = __webpack_require__(5);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _classnames = __webpack_require__(19);
+var _classnames = __webpack_require__(15);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _nodeInRoot = __webpack_require__(6);
+var _nodeInRoot = __webpack_require__(7);
 
 var _nodeInRoot2 = _interopRequireDefault(_nodeInRoot);
 
@@ -482,15 +491,15 @@ var _isNodeIn = __webpack_require__(2);
 
 var _isNodeIn2 = _interopRequireDefault(_isNodeIn);
 
-var _getBoundsForNode = __webpack_require__(7);
+var _getBoundsForNode = __webpack_require__(8);
 
 var _getBoundsForNode2 = _interopRequireDefault(_getBoundsForNode);
 
-var _doObjectsCollide = __webpack_require__(14);
+var _doObjectsCollide = __webpack_require__(16);
 
 var _doObjectsCollide2 = _interopRequireDefault(_doObjectsCollide);
 
-var _lodash = __webpack_require__(15);
+var _lodash = __webpack_require__(17);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -509,6 +518,9 @@ var SelectableGroup = function (_React$Component) {
 		_classCallCheck(this, SelectableGroup);
 
 		var _this = _possibleConstructorReturn(this, (SelectableGroup.__proto__ || Object.getPrototypeOf(SelectableGroup)).call(this, props));
+
+		_this.selectableRef = (0, _react.createRef)();
+
 
 		_this.state = {
 			isBoxSelecting: false,
@@ -589,10 +601,10 @@ var SelectableGroup = function (_React$Component) {
 		key: '_applyMousedown',
 		value: function _applyMousedown(apply) {
 			var funcName = apply ? 'addEventListener' : 'removeEventListener';
-			_reactDom2.default.findDOMNode(this)[funcName]('mousedown', this._mouseDown);
-			_reactDom2.default.findDOMNode(this)[funcName]('touchstart', this._mouseDown);
+			this.selectableRef.current[funcName]('mousedown', this._mouseDown);
+			this.selectableRef.current[funcName]('touchstart', this._mouseDown);
 
-			if (this.props.manageScroll) _reactDom2.default.findDOMNode(this).parentElement[funcName]('scroll', this._doScroll);
+			if (this.props.manageScroll) this.selectableRef.current.parentElement[funcName]('scroll', this._doScroll);
 		}
 	}, {
 		key: 'changeScrollOffsets',
@@ -650,7 +662,7 @@ var SelectableGroup = function (_React$Component) {
 			var mTop = parseInt(t.slice(0, t.length - 2), 10);
 
 			var bodyRect = document.body.getBoundingClientRect();
-			var elemRect = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
+			var elemRect = this.selectableRef.current.getBoundingClientRect();
 			return {
 				x: Math.round(elemRect.left - bodyRect.left + mLeft),
 				y: Math.round(elemRect.top - bodyRect.top + mTop)
@@ -661,7 +673,7 @@ var SelectableGroup = function (_React$Component) {
 		value: function _doScroll() {
 			if (!this._mouseDownData) return;
 
-			this.changeScrollOffsets(_reactDom2.default.findDOMNode(this).parentElement.scrollLeft - this._mouseDownData.initialScrollLeft, _reactDom2.default.findDOMNode(this).parentElement.scrollTop - this._mouseDownData.initialScrollTop);
+			this.changeScrollOffsets(this.selectableRef.current.parentElement.scrollLeft - this._mouseDownData.initialScrollLeft, this.selectableRef.current.parentElement.scrollTop - this._mouseDownData.initialScrollTop);
 		}
 
 		/**
@@ -682,7 +694,7 @@ var SelectableGroup = function (_React$Component) {
 			this._mouseUpStarted = false;
 			var e = this._desktopEventCoords(event);
 
-			var node = _reactDom2.default.findDOMNode(this);
+			var node = this.selectableRef.current;
 			var collides = void 0,
 			    offsetData = void 0,
 			    distanceData = void 0;
@@ -709,8 +721,8 @@ var SelectableGroup = function (_React$Component) {
 			}
 			this._rect = this._getInitialCoordinates();
 
-			var initialScrollLeft = _reactDom2.default.findDOMNode(this).parentElement.scrollLeft;
-			var initialScrollTop = _reactDom2.default.findDOMNode(this).parentElement.scrollTop;
+			var initialScrollLeft = this.selectableRef.current.parentElement.scrollLeft;
+			var initialScrollTop = this.selectableRef.current.parentElement.scrollTop;
 
 			var initialLeft = e.pageX - this._rect.x;
 			var initialTop = e.pageY - this._rect.y;
@@ -868,7 +880,7 @@ var SelectableGroup = function (_React$Component) {
 
 			return _react2.default.createElement(
 				Component,
-				{ className: (0, _classnames2.default)(className), style: wrapperStyle },
+				{ ref: this.selectableRef, className: (0, _classnames2.default)(className), style: wrapperStyle },
 				isBoxSelecting && _react2.default.createElement(
 					'div',
 					{ className: selectingClassName, style: boxStyle, ref: function ref(node) {
@@ -959,7 +971,7 @@ SelectableGroup.childContextTypes = {
 exports.default = SelectableGroup;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -974,10 +986,10 @@ exports.default = SelectableGroup;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var assign = __webpack_require__(11);
+var assign = __webpack_require__(12);
 
 var ReactPropTypesSecret = __webpack_require__(1);
-var checkPropTypes = __webpack_require__(12);
+var checkPropTypes = __webpack_require__(13);
 
 var printWarning = function printWarning() {};
 
@@ -1504,7 +1516,7 @@ module.exports = function (isValidElement, throwOnDirectAccess) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1600,7 +1612,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 };
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1687,7 +1699,7 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1748,7 +1760,70 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 14 */
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames() {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg) && arg.length) {
+				var inner = classNames.apply(null, arg);
+				if (inner) {
+					classes.push(inner);
+				}
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if ("function" === 'function' && _typeof(__webpack_require__(6)) === 'object' && __webpack_require__(6)) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return classNames;
+		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+		window.classNames = classNames;
+	}
+})();
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1758,7 +1833,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getBoundsForNode = __webpack_require__(7);
+var _getBoundsForNode = __webpack_require__(8);
 
 var _getBoundsForNode2 = _interopRequireDefault(_getBoundsForNode);
 
@@ -1808,7 +1883,7 @@ exports.default = function (a, b, tolerance) {
 };
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2251,10 +2326,10 @@ function toNumber(value) {
 }
 
 module.exports = throttle;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)))
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2284,7 +2359,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2329,6 +2404,8 @@ var createSelectable = function createSelectable(WrappedComponent) {
 		_createClass(SelectableItem, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				// Cannot remove findDOMNode here:
+				// There's no nice way to pass refs to function components
 				this.context.selectable.register(this.props.selectableKey, _reactDom2.default.findDOMNode(this));
 			}
 		}, {
@@ -2358,78 +2435,6 @@ var createSelectable = function createSelectable(WrappedComponent) {
 };
 
 exports.default = createSelectable;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
-/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
-module.exports = __webpack_amd_options__;
-
-/* WEBPACK VAR INJECTION */}.call(exports, {}))
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-/*!
-  Copyright (c) 2017 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-/* global define */
-
-(function () {
-	'use strict';
-
-	var hasOwn = {}.hasOwnProperty;
-
-	function classNames() {
-		var classes = [];
-
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			if (!arg) continue;
-
-			var argType = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
-
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
-			} else if (Array.isArray(arg) && arg.length) {
-				var inner = classNames.apply(null, arg);
-				if (inner) {
-					classes.push(inner);
-				}
-			} else if (argType === 'object') {
-				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
-					}
-				}
-			}
-		}
-
-		return classes.join(' ');
-	}
-
-	if (typeof module !== 'undefined' && module.exports) {
-		classNames.default = classNames;
-		module.exports = classNames;
-	} else if ("function" === 'function' && _typeof(__webpack_require__(18)) === 'object' && __webpack_require__(18)) {
-		// register as 'classnames', consistent with npm package name
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-			return classNames;
-		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-		window.classNames = classNames;
-	}
-})();
 
 /***/ })
 /******/ ]);
