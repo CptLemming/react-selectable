@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("react"), require("react-dom")) : factory(root["React"], root["ReactDOM"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_10__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -320,12 +320,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -359,7 +353,7 @@ if (process.env.NODE_ENV !== 'production') {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -368,7 +362,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -393,7 +387,7 @@ var isNodeInRoot = function isNodeInRoot(node, root) {
 exports.default = isNodeInRoot;
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -420,7 +414,7 @@ exports.default = function (node) {
 };
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -431,7 +425,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.nodeInRoot = exports.isNodeIn = exports.createSelectable = exports.SelectableGroup = undefined;
 
-var _selectableGroup = __webpack_require__(10);
+var _selectableGroup = __webpack_require__(9);
 
 var _selectableGroup2 = _interopRequireDefault(_selectableGroup);
 
@@ -443,7 +437,7 @@ var _isNodeIn = __webpack_require__(2);
 
 var _isNodeIn2 = _interopRequireDefault(_isNodeIn);
 
-var _nodeInRoot = __webpack_require__(7);
+var _nodeInRoot = __webpack_require__(6);
 
 var _nodeInRoot2 = _interopRequireDefault(_nodeInRoot);
 
@@ -455,7 +449,7 @@ exports.isNodeIn = _isNodeIn2.default;
 exports.nodeInRoot = _nodeInRoot2.default;
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -471,11 +465,11 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(4);
+var _reactDom = __webpack_require__(10);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _propTypes = __webpack_require__(5);
+var _propTypes = __webpack_require__(4);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
@@ -483,7 +477,7 @@ var _classnames = __webpack_require__(15);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _nodeInRoot = __webpack_require__(7);
+var _nodeInRoot = __webpack_require__(6);
 
 var _nodeInRoot2 = _interopRequireDefault(_nodeInRoot);
 
@@ -491,7 +485,7 @@ var _isNodeIn = __webpack_require__(2);
 
 var _isNodeIn2 = _interopRequireDefault(_isNodeIn);
 
-var _getBoundsForNode = __webpack_require__(8);
+var _getBoundsForNode = __webpack_require__(7);
 
 var _getBoundsForNode2 = _interopRequireDefault(_getBoundsForNode);
 
@@ -655,6 +649,10 @@ var SelectableGroup = function (_React$Component) {
 	}, {
 		key: '_getInitialCoordinates',
 		value: function _getInitialCoordinates() {
+			if (this.props.fixedPosition) {
+				return { x: 0, y: 0 };
+			}
+
 			var style = window.getComputedStyle(document.body);
 			var t = style.getPropertyValue('margin-top');
 			var l = style.getPropertyValue('margin-left');
@@ -969,6 +967,12 @@ SelectableGroup.childContextTypes = {
 };
 
 exports.default = SelectableGroup;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
 
 /***/ }),
 /* 11 */
@@ -1811,7 +1815,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	if (typeof module !== 'undefined' && module.exports) {
 		classNames.default = classNames;
 		module.exports = classNames;
-	} else if ("function" === 'function' && _typeof(__webpack_require__(6)) === 'object' && __webpack_require__(6)) {
+	} else if ("function" === 'function' && _typeof(__webpack_require__(5)) === 'object' && __webpack_require__(5)) {
 		// register as 'classnames', consistent with npm package name
 		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
 			return classNames;
@@ -1833,7 +1837,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getBoundsForNode = __webpack_require__(8);
+var _getBoundsForNode = __webpack_require__(7);
 
 var _getBoundsForNode2 = _interopRequireDefault(_getBoundsForNode);
 
@@ -2375,11 +2379,7 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(4);
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _propTypes = __webpack_require__(5);
+var _propTypes = __webpack_require__(4);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
@@ -2392,21 +2392,27 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var createSelectable = function createSelectable(WrappedComponent) {
-	var SelectableItem = function (_React$Component) {
-		_inherits(SelectableItem, _React$Component);
+	var SelectableItem = function (_Component) {
+		_inherits(SelectableItem, _Component);
 
 		function SelectableItem() {
+			var _ref;
+
+			var _temp, _this, _ret;
+
 			_classCallCheck(this, SelectableItem);
 
-			return _possibleConstructorReturn(this, (SelectableItem.__proto__ || Object.getPrototypeOf(SelectableItem)).apply(this, arguments));
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = SelectableItem.__proto__ || Object.getPrototypeOf(SelectableItem)).call.apply(_ref, [this].concat(args))), _this), _this.itemRef = (0, _react.createRef)(), _temp), _possibleConstructorReturn(_this, _ret);
 		}
 
 		_createClass(SelectableItem, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
-				// Cannot remove findDOMNode here:
-				// There's no nice way to pass refs to function components
-				this.context.selectable.register(this.props.selectableKey, _reactDom2.default.findDOMNode(this));
+				this.context.selectable.register(this.props.selectableKey, this.itemRef.current);
 			}
 		}, {
 			key: 'componentWillUnmount',
@@ -2416,18 +2422,27 @@ var createSelectable = function createSelectable(WrappedComponent) {
 		}, {
 			key: 'render',
 			value: function render() {
-				return _react2.default.createElement(WrappedComponent, this.props, this.props.children);
+				return _react2.default.createElement(
+					'div',
+					{ className: this.props.selectableClassName, ref: this.itemRef, id: "selectableItem-" + this.props.selectableKey },
+					_react2.default.createElement(
+						WrappedComponent,
+						this.props,
+						this.props.children
+					)
+				);
 			}
 		}]);
 
 		return SelectableItem;
-	}(_react2.default.Component);
+	}(_react.Component);
 
 	SelectableItem.contextTypes = {
 		selectable: _propTypes2.default.object
 	};
 
 	SelectableItem.propTypes = {
+		selectableClassName: _propTypes2.default.string,
 		selectableKey: _propTypes2.default.any.isRequired
 	};
 

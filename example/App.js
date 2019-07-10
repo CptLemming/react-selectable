@@ -111,6 +111,7 @@ class App extends React.Component {
 					return (
 						<SelectableAlbum
 							selectableKey={i}
+							selectableClassName="itemWrapper"
 							key={i} 
 							title={item.title} 
 							year={item.year} 

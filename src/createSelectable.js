@@ -1,28 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 
 const createSelectable = (WrappedComponent) => {
-	class SelectableItem extends React.Component {
+	class SelectableItem extends Component {
+		itemRef = createRef();
 
 		componentDidMount () {
-			// Cannot remove findDOMNode here:
-			// There's no nice way to pass refs to function components
-			this.context.selectable.register(this.props.selectableKey, ReactDOM.findDOMNode(this));
+			this.context.selectable.register(this.props.selectableKey, this.itemRef.current);
 		}
-
 
 		componentWillUnmount () {
 			this.context.selectable.unregister(this.props.selectableKey);
 		}
 
-
 		render () {
-			return React.createElement(
-				WrappedComponent,
-				this.props,
-				this.props.children
-			);
+          return <div className={this.props.selectableClassName} ref={this.itemRef} id={"selectableItem-"+this.props.selectableKey}>
+            <WrappedComponent {...this.props}>
+              {this.props.children}
+            </WrappedComponent>
+          </div>
 		}
 	}
 
@@ -31,6 +27,7 @@ const createSelectable = (WrappedComponent) => {
 	};
 
 	SelectableItem.propTypes = {
+		selectableClassName: PropTypes.string,
 		selectableKey: PropTypes.any.isRequired
 	};
 
