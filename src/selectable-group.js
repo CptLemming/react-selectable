@@ -127,7 +127,7 @@ class SelectableGroup extends React.Component {
 	}
 
 	_getInitialCoordinates() {
-		if (this.props.fixedPosition) {
+		if (this.props.fixedPosition || !this.props.enabled) {
 			return { x: 0, y: 0 }
 		}
 
