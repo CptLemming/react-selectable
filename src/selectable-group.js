@@ -81,10 +81,12 @@ class SelectableGroup extends React.Component {
 
 	_applyMousedown(apply) {
 		const funcName = apply ? 'addEventListener' : 'removeEventListener';
-		this.selectableRef.current[funcName]('mousedown', this._mouseDown);
-		this.selectableRef.current[funcName]('touchstart', this._mouseDown);
+		if (this.selectableRef.current) {
+			this.selectableRef.current[funcName]('mousedown', this._mouseDown);
+			this.selectableRef.current[funcName]('touchstart', this._mouseDown);
 
-		if (this.props.manageScroll) this.selectableRef.current.parentElement[funcName]('scroll', this._doScroll);
+			if (this.props.manageScroll) this.selectableRef.current.parentElement[funcName]('scroll', this._doScroll);
+		}
 	}
 
 	changeScrollOffsets (scrollLeftShift = 0, scrollTopShift = 0) {
